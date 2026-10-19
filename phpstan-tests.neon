@@ -1,0 +1,15 @@
+parameters:
+    level: 5
+    reportUnmatchedIgnoredErrors: true
+    inferPrivatePropertyTypeFromConstructor: true
+    paths:
+        - ../custom/plugins
+    bootstrapFiles:
+        - ../vendor/autoload.php
+        - vendor/autoload.php
+    excludePaths:
+        - '**/vendor/(?!(agiqon))/**'
+
+includes:
+    - ../vendor-bin/phpstan/vendor/phpstan/phpstan-phpunit/extension.neon
+    - ../vendor-bin/phpstan/vendor/phpstan/phpstan-phpunit/rules.neon

@@ -1,0 +1,26 @@
+# Shared definition for all build-js jobs.
+# Concrete jobs: .ci/build-js-feature.yml, .ci/build-js-stage.yml, .ci/build-js-prod.yml
+#
+# PLACEHOLDER: replace vendor/[customer] with the customer vendor directory,
+# and remove any vendor path the project does not use - chown aborts on a
+# missing path and fails the whole job.
+
+.build-js:
+  stage: build-js
+  image: "agiqon/pipeline:PHP_8.4-NODE_20"
+  variables:
+    DATABASE_URL: ''
+    SHOPWARE_SKIP_BUNDLE_DUMP: '1'
+  before_script:
+    - sudo chown docker:docker bin auth.json vendor/agiqon vendor/store.shopware.com vendor/[customer] -R
+    - ./bin/ci bundle:dump
+  artifacts:
+    expire_in: '600'
+    untracked: true
+    paths:
+      - auth.json
+      - composer.json
+      - composer.lock
+      - public
+      - vendor
+      - custom

@@ -1,0 +1,121 @@
+# Local development environment for Shopware 6.6
+# Usage: docker-compose up -d
+#
+# Services:
+#   shop       - Shopware application (dockware) → http://localhost
+#   db         - MariaDB 11.8                    → localhost:3306
+#   mailpit    - Mail catcher                    → http://localhost:8025 (SMTP: localhost:1025)
+#   adminer    - Database UI                     → http://localhost:8080
+#   redis      - Redis cache (optional)          → localhost:6379 (uncomment to enable)
+
+name: [projekt_name]
+
+services:
+    shop:
+        container_name: [projekt_name]_shopware
+        image: dockware/web:latest
+        restart: unless-stopped
+        ports:
+            - "22:22"   # SSH
+            - "80:80"     # Apache / Shopware
+            - "8888:8888" # Watch Admin
+            - "9999:9999" # Watch Storefront
+        volumes:
+            - "[projekt_name]_shopware_volume:/var/www/html"
+        networks:
+            - web
+        depends_on:
+            db:
+                condition: service_healthy
+            mailpit:
+                condition: service_started
+        environment:
+            - XDEBUG_ENABLED=1
+            - FILEBEAT_ENABLED=0
+            - PHP_VERSION=8.4
+            - NODE_VERSION=24
+
+    # -------------------------------------------------------------------------
+    mailpit:
+        container_name: [projekt_name]_mailpit
+        image: axllent/mailpit:v1.22
+        restart: unless-stopped
+        ports:
+            - "1025:1025" # SMTP (configure MAILER_DSN=smtp://mailpit:1025 in .env.local)
+            - "8025:8025" # Web UI → http://localhost:8025
+        networks:
+            - web
+
+    # -------------------------------------------------------------------------
+    db:
+        container_name: [projekt_name]_db
+        image: mariadb:11.8
+        restart: unless-stopped
+        command:
+            - --sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+            - --log_bin_trust_function_creators=1
+            - --binlog_cache_size=16M
+            - --key_buffer_size=0
+            - --join_buffer_size=1024M
+            - --innodb_log_file_size=128M
+            - --innodb_buffer_pool_size=1024M
+            - --innodb_buffer_pool_instances=1
+            - --group_concat_max_len=320000
+            - --default-time-zone=+00:00
+            - --max_binlog_size=512M
+            - --binlog_expire_logs_seconds=86400
+        volumes:
+            - "[projekt_name]_db_volume:/var/lib/mysql"
+        ports:
+            - "3306:3306"
+        networks:
+            - web
+        environment:
+            - MARIADB_DATABASE=shopware
+            - MARIADB_ROOT_PASSWORD=root
+            - MARIADB_USER=shopware
+            - MARIADB_PASSWORD=shopware
+            - TZ=Europe/Berlin
+        healthcheck:
+            test: [ "CMD", "mariadb-admin", "ping", "-h", "localhost", "-proot" ]
+            start_period: 10s
+            start_interval: 3s
+            interval: 5s
+            timeout: 1s
+            retries: 10
+
+    # -------------------------------------------------------------------------
+    adminer:
+        container_name: [projekt_name]_adminer
+        image: adminer:4.8.1
+        restart: unless-stopped
+        ports:
+            - "8080:8080" # Web UI → http://localhost:8080 (server: db, user: root, pwd: root)
+        networks:
+            - web
+        depends_on:
+            db:
+                condition: service_healthy
+
+    # -------------------------------------------------------------------------
+    # Redis (optional) – uncomment to enable caching / session storage
+    # After enabling: set REDIS_URL=redis://redis:6379 in .env.local
+    #
+    # redis:
+    #     container_name: [projekt_name]_redis
+    #     image: redis:7.4-alpine
+    #     restart: unless-stopped
+    #     ports:
+    #         - "6379:6379"
+    #     networks:
+    #         - web
+
+volumes:
+    [projekt_name]_shopware_volume:
+        driver: local
+    [projekt_name]_db_volume:
+        driver: local
+
+networks:
+    web:
+        driver: bridge

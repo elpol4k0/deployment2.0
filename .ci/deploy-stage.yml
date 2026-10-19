@@ -1,0 +1,17 @@
+# Deploy to the staging environment (branch: develop).
+# Base: .ci/deploy-base.yml
+#
+# PLACEHOLDER: replace [STAGING SERVER IP] with the staging server address.
+# The host name passed to "dep deploy" must match a host() in
+# .deployment/deploy.php.
+
+stage-deploy:
+  extends: .deployment
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop" && $CI_SERVER_HOST == "gitlab.agiqon.de"'
+  needs: [ stage-build-js, stage-eslint, stage-ludtwig, stage-codestyle, stage-phpunit ]
+  script:
+    - ssh-keyscan -H [STAGING SERVER IP] >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - cd ${CI_PROJECT_DIR}/.deployment && composer install --no-interaction --optimize-autoloader
+    - php vendor/bin/dep deploy staging -vvv

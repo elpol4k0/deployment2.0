@@ -1,0 +1,16 @@
+# build-composer for the production environment (branch: main).
+# Base: .ci/composer-base.yml
+#
+# Difference to staging: prod-composer.sh instead of stage-composer.sh and
+# --no-dev on the install.
+
+prod-composer:
+  extends: .composer
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  script:
+    - .local/prod-composer.sh
+    - composer install --no-interaction --no-dev --optimize-autoloader --no-scripts --ignore-platform-reqs && composer run apply-patches
+    - composer bin all install --no-interaction --no-scripts
+    - composer symfony:recipes:install --yes --no-interaction
+    - chmod 755 bin/*

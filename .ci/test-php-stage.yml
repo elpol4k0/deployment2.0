@@ -1,0 +1,29 @@
+# test-php for the staging environment (branch: develop).
+# Base: .ci/test-php-base.yml
+
+stage-codestyle:
+  extends: .test-php
+  needs: [ stage-composer ]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+  allow_failure: true
+  script:
+    - vendor-bin/cs-fixer/vendor/bin/php-cs-fixer fix -v --dry-run
+
+stage-phpstan:
+  extends: .test-php
+  needs: [ stage-composer ]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+  allow_failure: true
+  script:
+    - vendor-bin/phpstan/vendor/bin/phpstan analyse -c phpstan.neon
+
+stage-phpunit:
+  extends: .test-php
+  needs: [ stage-composer ]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+  allow_failure: true
+  script:
+    - vendor/bin/phpunit

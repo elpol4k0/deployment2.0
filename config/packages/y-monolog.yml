@@ -1,0 +1,6 @@
+monolog:
+  handlers:
+    main:
+      type: stream
+      level: notice
+      buffer_size: 30

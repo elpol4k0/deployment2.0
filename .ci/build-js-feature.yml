@@ -1,0 +1,26 @@
+# build-js smoke test for feature branches (everything except develop/main).
+# Base: .ci/build-js-base.yml
+#
+# The needs are declared optional on purpose: the referenced jobs only exist on
+# develop. Without optional: true GitLab refuses to create the pipeline at all
+# ("job needs ... not found"), which means feature branches would get no
+# pipeline whatsoever.
+
+test-build-js:
+  extends: .build-js
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "develop" && $CI_COMMIT_BRANCH != "main"'
+      changes:
+        - "**/*.js"
+        - "**/*.json"
+        - "**/*.scss"
+  needs:
+    - job: stage-composer
+      optional: true
+    - job: stage-codestyle
+      optional: true
+    - job: stage-phpstan
+      optional: true
+  script:
+    - shopware-cli project admin-build
+    - shopware-cli project storefront-build --skip-theme-compile

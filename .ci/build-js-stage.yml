@@ -1,0 +1,11 @@
+# build-js for the staging environment (branch: develop).
+# Base: .ci/build-js-base.yml
+
+stage-build-js:
+  extends: .build-js
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+  needs: [ stage-composer, stage-codestyle, stage-phpstan, stage-phpunit ]
+  script:
+    - shopware-cli project admin-build
+    - shopware-cli project storefront-build --skip-theme-compile

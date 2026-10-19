@@ -1,0 +1,8 @@
+# Exclude generated and external directories
+/vendor/
+/node_modules/
+/public/
+/var/
+
+# Exclude XML-Twig files (not supported by ludtwig)
+*.xml.twig

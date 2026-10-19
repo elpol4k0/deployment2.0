@@ -1,0 +1,13 @@
+# build-composer for the staging environment (branch: develop).
+# Base: .ci/composer-base.yml
+
+stage-composer:
+  extends: .composer
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+  script:
+    - .local/stage-composer.sh
+    - composer install --no-interaction --optimize-autoloader --no-scripts --ignore-platform-reqs && composer run apply-patches
+    - composer bin all install --no-interaction --no-scripts
+    - composer symfony:recipes:install --yes --no-interaction
+    - chmod 755 bin/*

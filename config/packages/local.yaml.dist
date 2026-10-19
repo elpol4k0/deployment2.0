@@ -1,0 +1,17 @@
+# Local config overrides – copy this file to local.yaml and adjust as needed.
+# This file is gitignored and intended for local development only.
+
+# Example: enable Symfony debug toolbar
+#web_profiler:
+#    toolbar: true
+#    intercept_redirects: false
+
+# Example: lower log level for local development
+#monolog:
+#    handlers:
+#        main:
+#            level: debug
+
+# Example: disable email sending locally
+#mailer:
+#    dsn: 'null://null'

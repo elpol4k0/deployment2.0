@@ -1,0 +1,17 @@
+# Ensure LF endings on check out and normalize all text files
+* text=auto eol=lf
+
+# Shell scripts should be executable
+*.sh text eol=lf mode=755
+
+# Specific files without extension but known to be executable
+/bin/ci text eol=lf mode=755
+/bin/console text eol=lf mode=755
+
+# PHP files
+*.php text eol=lf
+
+# Ensure known binary files are treated as such
+*.png binary
+*.jpg binary
+*.gif binary

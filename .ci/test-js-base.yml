@@ -1,0 +1,19 @@
+# Shared definitions for all test-js jobs.
+# Concrete jobs: .ci/test-js-stage.yml, .ci/test-js-prod.yml
+#
+# Two bases because ESLint and ludtwig need different images.
+# NOTE: all test-js jobs run with allow_failure: true and do NOT block the
+# deployment.
+
+.test-js-eslint:
+  stage: test-js
+  image: "agiqon/pipeline:PHP_8.4-NODE_20"
+  script:
+    - npm install
+    - npx eslint custom/
+
+.test-js-ludtwig:
+  stage: test-js
+  image: "agiqon/pipeline:PHP_8.4"
+  script:
+    - ludtwig custom/

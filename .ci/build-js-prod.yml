@@ -1,0 +1,11 @@
+# build-js for the production environment (branch: main).
+# Base: .ci/build-js-base.yml
+
+prod-build-js:
+  extends: .build-js
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  needs: [ prod-composer, prod-codestyle, prod-phpstan, prod-phpunit ]
+  script:
+    - shopware-cli project admin-build
+    - shopware-cli project storefront-build --skip-theme-compile

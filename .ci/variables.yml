@@ -1,0 +1,10 @@
+# Global pipeline configuration: variables and cache.
+
+cache:
+  key: "$CI_JOB_NAME-$CI_COMMIT_REF_SLUG"
+
+variables:
+  CI: "1"
+  DOCKER_DRIVER: overlay2
+  SHOPWARE_SKIP_THEME_COMPILE: "true"
+  PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"

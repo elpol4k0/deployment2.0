@@ -1,0 +1,11 @@
+{
+    "gitlab-token": {
+        "gitlab.agiqon.de": {
+            "username": "[tokenUserName]",
+            "token": "[tokenToken]"
+        }
+    },
+    "bearer": {
+        "packages.shopware.com": "[shopwareBearerToken]"
+    }
+}

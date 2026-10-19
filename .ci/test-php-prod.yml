@@ -1,0 +1,29 @@
+# test-php for the production environment (branch: main).
+# Base: .ci/test-php-base.yml
+
+prod-codestyle:
+  extends: .test-php
+  needs: [ prod-composer ]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  allow_failure: true
+  script:
+    - vendor-bin/cs-fixer/vendor/bin/php-cs-fixer fix -v --dry-run
+
+prod-phpstan:
+  extends: .test-php
+  needs: [ prod-composer ]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  allow_failure: true
+  script:
+    - vendor-bin/phpstan/vendor/bin/phpstan analyse -c phpstan.neon
+
+prod-phpunit:
+  extends: .test-php
+  needs: [ prod-composer ]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  allow_failure: true
+  script:
+    - vendor/bin/phpunit

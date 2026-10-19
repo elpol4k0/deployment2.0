@@ -1,0 +1,5 @@
+services:
+    -
+        class: \SalesChannelContextVariableNameRule
+        tags:
+            - phpstan.rules.rule

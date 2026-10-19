@@ -1,0 +1,16 @@
+# test-js for the staging environment (branch: develop).
+# Base: .ci/test-js-base.yml
+
+stage-eslint:
+  extends: .test-js-eslint
+  needs: [ stage-build-js ]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+  allow_failure: true
+
+stage-ludtwig:
+  extends: .test-js-ludtwig
+  needs: [ stage-build-js ]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+  allow_failure: true

@@ -1,0 +1,43 @@
+# GitLab CI entry point.
+#
+# The pipeline definition is split across .ci/ so that stages and environments
+# can be managed independently. See .ci/README.md for the conventions.
+#
+# Naming: .ci/<stage>-base.yml holds the hidden job, .ci/<stage>-<env>.yml the
+# concrete jobs of one environment.
+
+stages:
+  - build-composer
+  - test-php
+  - build-js
+  - test-js
+  - deploy
+
+include:
+  - local: '.ci/variables.yml'
+
+  # build-composer
+  - local: '.ci/composer-base.yml'
+  - local: '.ci/composer-stage.yml'
+  - local: '.ci/composer-prod.yml'
+
+  # test-php
+  - local: '.ci/test-php-base.yml'
+  - local: '.ci/test-php-stage.yml'
+  - local: '.ci/test-php-prod.yml'
+
+  # build-js
+  - local: '.ci/build-js-base.yml'
+  - local: '.ci/build-js-feature.yml'
+  - local: '.ci/build-js-stage.yml'
+  - local: '.ci/build-js-prod.yml'
+
+  # test-js
+  - local: '.ci/test-js-base.yml'
+  - local: '.ci/test-js-stage.yml'
+  - local: '.ci/test-js-prod.yml'
+
+  # deploy
+  - local: '.ci/deploy-base.yml'
+  - local: '.ci/deploy-stage.yml'
+  - local: '.ci/deploy-prod.yml'

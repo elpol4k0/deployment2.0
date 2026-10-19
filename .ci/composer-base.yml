@@ -1,0 +1,32 @@
+# Shared definition for all build-composer jobs.
+# Concrete jobs: .ci/composer-stage.yml, .ci/composer-prod.yml
+
+.composer:
+  stage: build-composer
+  image: "agiqon/pipeline:PHP_8.4"
+  before_script:
+    ### THIS PART ONLY IF GLOBAL PLUGIN REPOS ARE USED, OTHERWISE THIS CAN BE REMOVED ###
+    - eval $(ssh-agent -s)
+    - echo "$COMPOSER_DEPLOY_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan -H gitlab.agiqon.de >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    ### THIS PART ONLY IF GLOBAL PLUGIN REPOS ARE USED, OTHERWISE THIS CAN BE REMOVED ###
+    - composer config gitlab-token.gitlab.agiqon.de $DEPLOY_TOKEN_USER $DEPLOY_TOKEN
+    - composer config bearer.packages.shopware.com $SW_COMPOSER_TOKEN
+  artifacts:
+    expire_in: '600'
+    paths:
+      - auth.json
+      - composer.json
+      - composer.lock
+      - vendor
+      - vendor-bin/*/vendor
+      - bin
+      - config
+      - public
+      - src
+      - phpunit.xml
+      - .htaccess
+      - custom

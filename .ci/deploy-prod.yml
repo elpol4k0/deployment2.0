@@ -1,0 +1,17 @@
+# Deploy to the production environment (branch: main).
+# Base: .ci/deploy-base.yml
+#
+# PLACEHOLDER: replace [PROD SERVER IP] with the live server address.
+# The host name passed to "dep deploy" must match a host() in
+# .deployment/deploy.php.
+
+deploy-production:
+  extends: .deployment
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" && $CI_SERVER_HOST == "gitlab.agiqon.de"'
+  needs: [ prod-build-js, prod-codestyle, prod-phpstan, prod-phpunit, prod-eslint, prod-ludtwig ]
+  script:
+    - ssh-keyscan -H [PROD SERVER IP] >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - cd ${CI_PROJECT_DIR}/.deployment && composer install --no-interaction --optimize-autoloader
+    - php vendor/bin/dep deploy production -vvv

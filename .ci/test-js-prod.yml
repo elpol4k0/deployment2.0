@@ -1,0 +1,16 @@
+# test-js for the production environment (branch: main).
+# Base: .ci/test-js-base.yml
+
+prod-eslint:
+  extends: .test-js-eslint
+  needs: [ prod-build-js ]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  allow_failure: true
+
+prod-ludtwig:
+  extends: .test-js-ludtwig
+  needs: [ prod-build-js ]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  allow_failure: true

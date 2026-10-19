@@ -1,0 +1,10 @@
+# Shared definition for all test-php jobs.
+# Concrete jobs: .ci/test-php-stage.yml, .ci/test-php-prod.yml
+#
+# NOTE: all test-php jobs run with allow_failure: true, so they do NOT block
+# the deployment. Remove allow_failure in the environment files if you want a
+# hard quality gate.
+
+.test-php:
+  stage: test-php
+  image: "agiqon/pipeline:PHP_8.4"

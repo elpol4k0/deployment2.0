@@ -1,0 +1,11 @@
+# Shared definition for all deploy jobs.
+# Concrete jobs: .ci/deploy-stage.yml, .ci/deploy-prod.yml
+
+.deployment:
+  stage: deploy
+  image: "agiqon/pipeline:PHP_8.4"
+  before_script:
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh

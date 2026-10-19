@@ -1,0 +1,7 @@
+shopware:
+  admin_worker:
+    enable_admin_worker: false
+  deployment:
+    runtime_extension_management: false
+  auto_update:
+    enabled: false
